@@ -6,7 +6,7 @@ detectURL is a Python CLI to detect links in a file and determine whether the li
 ## Install
 1. Clone Repository
 ```
-git clone https://github.com/jongwon-jang/detectURL/tree/master
+git clone https://github.com/jongwon-jang/detectURL/
 ```
 2. Install requirements
 ```
