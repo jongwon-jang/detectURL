@@ -27,33 +27,32 @@ args = parser.parse_args()
 
 
 def initialize():
-    urls = []
 
     with open(sys.argv[1]) as file:
+        urls = []
+
         for line in file:
             url = re.findall('https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+', line)
-            if url:
-                urls += url
-    final_urls = list(dict.fromkeys(urls))  # Remove Duplicates
+            [urls.append(final) for final in url if final not in urls]
 
-    for link in final_urls:
-        try:
-            r = requests.get(link, timeout=1.5)
-            if r.status_code == 200:
-                print(Fore.GREEN + "GOOD - " + str(link))
-            r.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            status_code = e.response.status_code
-            if status_code == 400 or 404:
-                print(Fore.RED + "BAD - " + link)
-            else:
+        for link in urls:
+            try:
+                r = requests.get(link, timeout=1.5)
+                if r.status_code == 200:
+                    print(Fore.GREEN + "GOOD - " + str(link))
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                if status_code == 400 or 404:
+                    print(Fore.RED + "BAD - " + link)
+                else:
+                    print(Fore.WHITE + "UNKNOWN - " + link)
+            except requests.exceptions.ConnectionError:
                 print(Fore.WHITE + "UNKNOWN - " + link)
-        except requests.exceptions.ConnectionError:
-            print(Fore.WHITE + "UNKNOWN - " + link)
-        except requests.exceptions.Timeout:
-            print(Fore.RED + "BAD - " + link)
+            except requests.exceptions.Timeout:
+                print(Fore.RED + "BAD - " + link)
 
-    print(Fore.RESET)
+        print(Fore.RESET)
 
 
 # https://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
