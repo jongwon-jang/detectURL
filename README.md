@@ -14,6 +14,10 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+Check link status within a file
+```python
+./detectURL [FILE]
+```
 Check the current version of the tool
 ```python
 ./detectURL -v
