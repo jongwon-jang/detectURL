@@ -80,9 +80,11 @@ def initialize():
         if args.good is not None:
             for goodLinks in goodURLs:
                 print(Fore.GREEN + "GOOD - " + str(goodLinks))
+            sys.exit(0)
         elif args.bad is not None:
             for badLinks in badURLs:
                 print(Fore.RED + "BAD - " + str(badLinks))
+            sys.exit(1)
         elif args.all is not None:
             allURLs = goodURLs + badURLs + unknownURLs
             for allLinks in allURLs:
@@ -92,6 +94,7 @@ def initialize():
                     print(Fore.RED + "BAD - " + str(allLinks))
                 elif allLinks in unknownURLs:
                     print(Fore.WHITE + "UNKONWN - " + str(allLinks))
+            sys.exit(2)
         else:
             allURLs = goodURLs + badURLs + unknownURLs
             for allLinks in allURLs:
@@ -101,14 +104,13 @@ def initialize():
                     print(Fore.RED + "BAD - " + str(allLinks))
                 elif allLinks in unknownURLs:
                     print(Fore.WHITE + "UNKONWN - " + str(allLinks))
-
-        print(Fore.RESET)
+            sys.exit(2)
 
 
 # https://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
 if len(sys.argv) < 2:
     parser.print_usage()
-    sys.exit(1)
+    sys.exit(3)
 
 if __name__ == "__main__":
     initialize()
