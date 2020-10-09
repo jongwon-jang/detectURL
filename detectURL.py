@@ -23,13 +23,34 @@ parser.add_argument(
     action="version",
     version="detectURL v0.1"
 )
+
+parser.add_argument(
+    "--all",
+    help="prints all urls",
+    nargs="*"
+)
+
+parser.add_argument(
+    "--good",
+    help="prints good urls",
+    nargs="*"
+)
+
+parser.add_argument(
+    "--bad",
+    help="prints bad urls",
+    nargs="*"
+)
+
 args = parser.parse_args()
 
 
 def initialize():
-
     with open(sys.argv[1]) as file:
         urls = []
+        goodURLs = []
+        badURLs = []
+        unknownURLs = []
 
         for line in file:
             url = re.findall('https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+', line)
@@ -39,18 +60,47 @@ def initialize():
             try:
                 r = requests.get(link, timeout=1.5)
                 if r.status_code == 200:
-                    print(Fore.GREEN + "GOOD - " + str(link))
+                    goodURLs.append(link)
                 r.raise_for_status()
             except requests.exceptions.HTTPError as e:
                 status_code = e.response.status_code
                 if status_code == 400 or 404:
-                    print(Fore.RED + "BAD - " + link)
+                    # print(Fore.RED + "BAD - " + link)
+                    badURLs.append(link)
                 else:
-                    print(Fore.WHITE + "UNKNOWN - " + link)
+                    # print(Fore.WHITE + "UNKNOWN - " + link)
+                    unknownURLs.append(link)
             except requests.exceptions.ConnectionError:
-                print(Fore.WHITE + "UNKNOWN - " + link)
+                # print(Fore.WHITE + "UNKNOWN - " + link)
+                unknownURLs.append(link)
             except requests.exceptions.Timeout:
-                print(Fore.RED + "BAD - " + link)
+                # print(Fore.RED + "BAD - " + link)
+                badURLs.append(link)
+
+        if args.good is not None:
+            for goodLinks in goodURLs:
+                print(Fore.GREEN + "GOOD - " + str(goodLinks))
+        elif args.bad is not None:
+            for badLinks in badURLs:
+                print(Fore.RED + "BAD - " + str(badLinks))
+        elif args.all is not None:
+            allURLs = goodURLs + badURLs + unknownURLs
+            for allLinks in allURLs:
+                if allLinks in goodURLs:
+                    print(Fore.GREEN + "GOOD - " + str(allLinks))
+                elif allLinks in badURLs:
+                    print(Fore.RED + "BAD - " + str(allLinks))
+                elif allLinks in unknownURLs:
+                    print(Fore.WHITE + "UNKONWN - " + str(allLinks))
+        else:
+            allURLs = goodURLs + badURLs + unknownURLs
+            for allLinks in allURLs:
+                if allLinks in goodURLs:
+                    print(Fore.GREEN + "GOOD - " + str(allLinks))
+                elif allLinks in badURLs:
+                    print(Fore.RED + "BAD - " + str(allLinks))
+                elif allLinks in unknownURLs:
+                    print(Fore.WHITE + "UNKONWN - " + str(allLinks))
 
         print(Fore.RESET)
 
@@ -59,9 +109,6 @@ def initialize():
 if len(sys.argv) < 2:
     parser.print_usage()
     sys.exit(1)
-
-if sys.argv[1]:
-    initialize()
 
 if __name__ == "__main__":
     initialize()
