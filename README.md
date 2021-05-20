@@ -1,6 +1,7 @@
 # detectURL
 
 detectURL is a Python CLI to detect links in a file and determine whether the links within a file is dead or not.
+
 ![example1](https://media.giphy.com/media/fp8CDcKA4pzelBlXcw/giphy.gif)
 
 ## Install
